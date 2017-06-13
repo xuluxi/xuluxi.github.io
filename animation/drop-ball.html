@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #main-wrapper {
+      width: 420px;
+      margin: 0 auto;
+    }
+    #canvas {
+      border: 1px solid;
+    }
+    button {
+      width: 60px;
+      line-height: 30px;
+      text-align: center;
+      background-color: #4285f4;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    .button-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+<div id="main-wrapper">
+  <canvas id='canvas' width='400' height='300'>
+  </canvas>
+  </br>
+  水平方向抛出力度：<input id='throw-range-x' type='range' min='-10' max='10'/>
+  </br>
+  垂直方向抛出力度：<input id='throw-range-y' type='range' min='-10' max='10'/>
+  <div class='button-wrapper'>
+    <button onclick='addBall()'>抛出</button>
+    <button onclick='clearBalls()'>清空</button>
+  </div>
+</div>
+<script>
+function Ball(x,y,dx,dy,radius) {
+  this.x = x;
+  this.y = y;
+  this.dx = dx;
+  this.dy = dy;
+  this.radius = radius;
+  // Y轴或X轴方向是否停止运动
+  this.endY = false;
+  this.endX = false;
+  this.fillColor = '#999';
+}
+var balls = [];
+var canvas;
+var context;
+var rangeInputX;
+var rangeInputY;
+var rangeX = 0;
+var rangeY = 0;
+
+window.onload = function() {
+  canvas = document.getElementById('canvas');
+  context = canvas.getContext('2d');
+  rangeInputX = document.getElementById('throw-range-x');
+  rangeInputY = document.getElementById('throw-range-y');
+  rangeInputX.onchange = function() {
+    rangeX = new Number(this.value);
+  }
+  rangeInputY.onchange = function() {
+    rangeY = new Number(this.value);
+  }
+  requestAnimationFrame(drawFrame);
+}
+
+function addBall() {
+  console.log(rangeX,rangeY)
+  var ball = new Ball(200,100,rangeX,rangeY,20);
+  balls.push(ball);
+}
+
+function clearBalls() {
+  balls = [];
+}
+
+function drawFrame() {
+  context.clearRect(0,0,canvas.width,canvas.height);
+  context.beginPath();
+
+  for(var i = 0;i < balls.length;i++) {
+    var ball = balls[i];
+
+    if(!ball.endX) {
+      // X轴方向运动碰撞到边缘检测
+      if((ball.x + ball.radius > canvas.width)) {
+        if(Math.abs(ball.dx) < 0.22) {
+          ball.endX = true;
+        }
+        ball.dx = -ball.dx * 0.8;
+        ball.x = canvas.width - ball.radius;
+      } else if(ball.x < ball.radius) {
+        if(Math.abs(ball.dx) < 0.22) {
+          ball.endX = true;
+        }
+        // 模拟碰撞后能量损失
+        ball.dx = -ball.dx * 0.8;
+        ball.x = ball.radius;
+      }
+      // x轴方向，模拟速度由于空气阻力自然衰减
+      ball.dx = ball.dx * 0.998;
+      ball.x += ball.dx;
+    };
+    if(!ball.endY) {
+      // Y轴方向运动碰撞到边缘检测
+      if((ball.y + ball.radius > canvas.height)) {
+        if(ball.dy < 0.22) {
+          ball.endY = true;
+        }
+        // 模拟碰撞后能量损失
+        ball.dy = -ball.dy * 0.91;
+        ball.y = canvas.height - ball.radius;
+      } else if (ball.y < ball.radius) {
+        ball.dy = -ball.dy * 0.91;
+        ball.y = ball.radius;
+      } else {
+        // 模拟重力加速度
+        ball.dy += 0.22;
+        ball.y += ball.dy;
+      }
+    }
+
+    context.beginPath();
+    context.fillStyle = ball.fillColor;
+    context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+    context.fill();
+  }
+  requestAnimationFrame(drawFrame);
+}
+
+</script>
+</body>
+</html>
