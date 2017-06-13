@@ -2,7 +2,9 @@
 <html>
 <head>
 <style>
-body {
+html,body {
+  width: 100%;
+  height: 100%;
   background-color: #000;
 }
 @keyframes round {
@@ -13,21 +15,21 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 30px;
-    transform-origin: 200px 200px;
+    transform-origin: 500px 500px;
   }
   50% {
     transform: rotate(360deg);
-    top: 100px;
-    left: 100px;
+    top: 250px;
+    left: 250px;
     width: 15px;
     height: 15px;
     border-radius: 15px;
-    transform-origin: 100px 100px;
+    transform-origin: 250px 250px;
   }
   100% {
     transform: rotate(720deg);
-    top: 200px;
-    left: 200px;
+    top: 500px;
+    left: 500px;
     width: 0px;
     height: 0px;
     border-radius: 0px;
@@ -48,11 +50,15 @@ body {
   }
 }
 #main {
-  position: relative;
-  width: 400px;
-  height: 400px;
+  position: absolute;
+  width: 1000px;
+  height: 1000px;
   padding: 0;
-  margin: 0;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 li {
   position: absolute;
@@ -62,8 +68,8 @@ li {
   box-shadow: 0px 0px 10px #eee;
 }
 .center {
-  top: 200px;
-  left: 200px;
+  top: 500px;
+  left: 500px;
   width: 4px;
   height: 4px;
   border-radius: 4px;
@@ -78,7 +84,7 @@ li {
   width: 30px;
   height: 30px;
   border-radius: 30px;
-  transform-origin: 200px 200px;
+  transform-origin: 500px 500px;
   animation-name: round;
   animation-duration: 10s;
   animation-timing-function: linear;
@@ -98,7 +104,7 @@ window.onload = function() {
   var mainDom = document.getElementById('main');
   var i = 0;
   var id = setInterval(function(){
-    if (i > 50) {
+    if (i > 100) {
       clearInterval(id)
       return;
     };
@@ -108,7 +114,7 @@ window.onload = function() {
     Li.className = 'dots';
     mainDom.appendChild(Li);
     requestAnimationFrame(step);
-  },200);
+  },100);
 }
 </script>
 </body>
