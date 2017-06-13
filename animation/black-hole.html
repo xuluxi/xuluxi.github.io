@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  background-color: #000;
+}
+@keyframes round {
+  0% {
+    transform: rotate(0deg);
+    top: 0px;
+    left: 0px;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    transform-origin: 200px 200px;
+  }
+  50% {
+    transform: rotate(360deg);
+    top: 100px;
+    left: 100px;
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    transform-origin: 100px 100px;
+  }
+  100% {
+    transform: rotate(720deg);
+    top: 200px;
+    left: 200px;
+    width: 0px;
+    height: 0px;
+    border-radius: 0px;
+    transform-origin: 0px 0px;
+    display: none;
+  }
+}
+@keyframes breath {
+  0% {
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+  }
+  100% {
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+  }
+}
+#main {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  padding: 0;
+  margin: 0;
+}
+li {
+  position: absolute;
+  list-style: none;
+  box-sizing: border-box;
+  background-color: #888;
+  box-shadow: 0px 0px 10px #eee;
+}
+.center {
+  top: 200px;
+  left: 200px;
+  width: 4px;
+  height: 4px;
+  border-radius: 4px;
+  background-color: #000;
+  animation-name: breath;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+  animation-direction: alternate-reverse;
+}
+.dots {
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  transform-origin: 200px 200px;
+  animation-name: round;
+  animation-duration: 10s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+}
+</style>
+</head>
+<body>
+<ul id="main">
+  <li class='center'></li>
+  <li class="dots"></li>
+</ul>
+
+<script>
+window.onload = function() {
+  var mainDom = document.getElementById('main');
+  var i = 0;
+  var id = setInterval(function(){
+    if (i > 50) {
+      clearInterval(id)
+      return;
+    };
+    i++;
+    console.log(i)
+    var Li = document.createElement('li');
+    Li.className = 'dots';
+    mainDom.appendChild(Li);
+    requestAnimationFrame(step);
+  },200);
+}
+</script>
+</body>
+</html>
