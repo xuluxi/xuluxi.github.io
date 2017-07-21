@@ -9,11 +9,8 @@
 </p>
 <a href="javascript:" id='link'>link</a>
 <script>
-var orientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
 var a = document.getElementById('link');
-orientation.onchange = function() {
-  a.innerText = orientation.angle + orientation.type;
-}
+a.innerText = devicePixelRatio; 
 </script>
 </body>
 </html>
