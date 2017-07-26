@@ -10,18 +10,23 @@ p {
 </style>
 </head>
 <body>
-<p id="myp">
- this is test.html
-</p>
-<a href="javascript:" id='link'>link</a>
-<script>
-var a = document.getElementById('link');
-a.ontouch = function() {
-  alert(23)
-}
-document.querySelector('#myp').ontouch = function() {
-  alert(235)
-}
+    <h1 id="num">0</h1>
+    <button id="resize-btn">+++</button>
+    <button id="decrease-btn">---</button>
+    <script>
+    var num = 0;
+    function addNum(num) {
+      document.querySelector("#num").innerText = num;
+    }
+    document.querySelector("#resize-btn").addEventListener('touchstart', ()=> {
+      num++;
+      addNum(num);
+    })
+    document.querySelector("#decrease-btn").addEventListener('click', ()=> {
+      num--;
+      addNum(num);
+    })
+
 </script>
 </body>
 </html>
