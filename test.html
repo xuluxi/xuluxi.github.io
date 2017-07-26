@@ -10,7 +10,7 @@ p {
 </style>
 </head>
 <body>
-<p>
+<p id="myp">
  this is test.html
 </p>
 <a href="javascript:" id='link'>link</a>
@@ -18,6 +18,9 @@ p {
 var a = document.getElementById('link');
 a.ontouch = function() {
   alert(23)
+}
+document.querySelector('#myp').ontouch = function() {
+  alert(235)
 }
 </script>
 </body>
