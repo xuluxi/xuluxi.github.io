@@ -16,7 +16,9 @@ p {
 <a href="javascript:" id='link'>link</a>
 <script>
 var a = document.getElementById('link');
-a.innerText = devicePixelRatio; 
+a.ontouch = function() {
+  alert(23)
+}
 </script>
 </body>
 </html>
