@@ -3,7 +3,7 @@
 <head>
   <style>
     #main-wrapper {
-      width: 420px;
+      width: 820px;
       margin: 0 auto;
     }
     #canvas {
@@ -28,7 +28,7 @@
 </head>
 <body>
 <div id="main-wrapper">
-  <canvas id='canvas' width='400' height='300'>
+  <canvas id='canvas' width='800' height='600'>
   </canvas>
   </br>
   水平方向抛出力度：<input id='throw-range-x' type='range' min='-10' max='10'/>
@@ -40,101 +40,108 @@
   </div>
 </div>
 <script>
-function Ball(x,y,dx,dy,radius) {
-  this.x = x;
-  this.y = y;
-  this.dx = dx;
-  this.dy = dy;
-  this.radius = radius;
-  // Y轴或X轴方向是否停止运动
-  this.endY = false;
-  this.endX = false;
-  this.fillColor = '#999';
-}
-var balls = [];
-var canvas;
-var context;
-var rangeInputX;
-var rangeInputY;
-var rangeX = 0;
-var rangeY = 0;
+/**
+* 速度单位 px/frame
+*/
 
-window.onload = function() {
-  canvas = document.getElementById('canvas');
-  context = canvas.getContext('2d');
-  rangeInputX = document.getElementById('throw-range-x');
-  rangeInputY = document.getElementById('throw-range-y');
-  rangeInputX.onchange = function() {
-    rangeX = new Number(this.value);
+let balls = []
+let canvas
+let context
+let rangeInputX
+let rangeInputY
+let rangeX = 0
+let rangeY = 0
+const speedToStop = 0.22 // 可以停下来的速度
+const hitLoss =  0.55 // 碰撞损耗
+const gravityAcceleration =  -0.4 // 重力加速度
+const ariLoss =  0.998 // 空气阻力损耗
+
+class Ball {
+  constructor(x, y, speedX, speedY, radius) {
+    this.x = x
+    this.y = y
+    this.speedX = speedX // X 轴方向速度
+    this.speedY = speedY // Y 轴方向速度
+    this.radius = radius
+    // Y轴或X轴方向是否停止运动
+    this.endY = false
+    this.endX = false
   }
-  rangeInputY.onchange = function() {
-    rangeY = new Number(this.value);
-  }
-  requestAnimationFrame(drawFrame);
 }
 
 function addBall() {
-  console.log(rangeX,rangeY)
-  var ball = new Ball(200,100,rangeX,rangeY,20);
-  balls.push(ball);
+  let ball = new Ball(400, 200, rangeX, rangeY, 20)
+  balls.push(ball)
 }
 
 function clearBalls() {
-  balls = [];
+  balls = []
 }
 
 function drawFrame() {
-  context.clearRect(0,0,canvas.width,canvas.height);
-  context.beginPath();
+  context.clearRect(0, 0, canvas.width, canvas.height)
+  context.beginPath()
 
-  for(var i = 0;i < balls.length;i++) {
-    var ball = balls[i];
+  for(let i = 0; i < balls.length; i++) {
+    let ball = balls[i]
 
     if(!ball.endX) {
       // X轴方向运动碰撞到边缘检测
-      if((ball.x + ball.radius > canvas.width)) {
-        if(Math.abs(ball.dx) < 0.22) {
-          ball.endX = true;
-        }
-        ball.dx = -ball.dx * 0.8;
-        ball.x = canvas.width - ball.radius;
-      } else if(ball.x < ball.radius) {
-        if(Math.abs(ball.dx) < 0.22) {
-          ball.endX = true;
-        }
+      if(ball.x + ball.radius >= canvas.width) {
+        ball.speedX = -ball.speedX * hitLoss
+        ball.x = canvas.width - ball.radius
+      } else if(ball.x <= ball.radius) {
         // 模拟碰撞后能量损失
-        ball.dx = -ball.dx * 0.8;
-        ball.x = ball.radius;
+        ball.speedX = -ball.speedX * hitLoss
+        ball.x = ball.radius
+      }
+      // 速度过慢检查
+      if(Math.abs(ball.speedX) < speedToStop) {
+        ball.endX = true
       }
       // x轴方向，模拟速度由于空气阻力自然衰减
-      ball.dx = ball.dx * 0.998;
-      ball.x += ball.dx;
-    };
-    if(!ball.endY) {
-      // Y轴方向运动碰撞到边缘检测
-      if((ball.y + ball.radius > canvas.height)) {
-        if(ball.dy < 0.22) {
-          ball.endY = true;
-        }
-        // 模拟碰撞后能量损失
-        ball.dy = -ball.dy * 0.91;
-        ball.y = canvas.height - ball.radius;
-      } else if (ball.y < ball.radius) {
-        ball.dy = -ball.dy * 0.91;
-        ball.y = ball.radius;
-      } else {
-        // 模拟重力加速度
-        ball.dy += 0.22;
-        ball.y += ball.dy;
-      }
+      ball.speedX = ball.speedX * ariLoss
+      ball.x += ball.speedX
     }
 
-    context.beginPath();
-    context.fillStyle = ball.fillColor;
-    context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-    context.fill();
+    if(!ball.endY) {
+      // Y轴方向运动碰撞到边缘检测
+      if(ball.y + ball.radius >= canvas.height) {
+        if(Math.abs(ball.speedY) < speedToStop) {
+          ball.endY = true
+        }
+        // 模拟碰撞后能量损失
+        ball.speedY = -ball.speedY * hitLoss
+        ball.y = canvas.height - ball.radius
+      } else if (ball.y <= ball.radius) {
+        ball.speedY = -ball.speedY * hitLoss
+        ball.y = ball.radius
+      }
+      // 模拟重力加速度
+      ball.speedY += gravityAcceleration
+      ball.y += ball.speedY
+    }
+
+    context.beginPath()
+    context.fillStyle = '#999'
+    context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2)
+    context.fill()
   }
-  requestAnimationFrame(drawFrame);
+  requestAnimationFrame(drawFrame)
+}
+
+window.onload = function() {
+  canvas = document.getElementById('canvas')
+  context = canvas.getContext('2d')
+  rangeInputX = document.getElementById('throw-range-x')
+  rangeInputY = document.getElementById('throw-range-y')
+  rangeInputX.onchange = function() {
+    rangeX = new Number(this.value)
+  }
+  rangeInputY.onchange = function() {
+    rangeY = new Number(this.value)
+  }
+  drawFrame()
 }
 
 </script>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #frame-img {
+      display: block;
+      margin: 0 auto;
+    }
+    #drop-btn {
+      display: block;
+      margin: 0 auto;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+<img id="frame-img" src="./imgs/animate-throwing-ball-slide-0.jpg">
+<button id="drop-btn">扔铅球砸你脑瓜子</button>
+<script>
+window.onload = () => {
+  let baseImgUrl = './imgs/animate-throwing-ball-slide-'
+  let imgTag = document.querySelector('#frame-img')
+  let dropBtn = document.querySelector('#drop-btn')
+
+  dropBtn.onclick = () => {
+    let i = 0
+    let intervalID = setInterval(() => {
+      imgTag.src = `${baseImgUrl}${i++}.jpg`
+      if (i > 8) {
+        clearInterval(intervalID)
+      }
+    }, 125)
+  }
+}
+</script>
+</body>
+</html>
